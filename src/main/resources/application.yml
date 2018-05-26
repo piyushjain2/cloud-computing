@@ -3,3 +3,4 @@ amazonProperties:
   accessKey: AKIAIBXSZBNKWY2BWOZQ
   secretKey: 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
   bucketName: piyush-jain-bucket
+  dynamodb.endpoint: dynamodb.ap-southeast-1.amazonaws.com

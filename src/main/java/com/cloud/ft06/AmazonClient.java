@@ -32,8 +32,7 @@ public class AmazonClient {
     private String secretKey;
     @PostConstruct
     private void initializeAmazon() {
-        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-        this.s3client = new AmazonS3Client(credentials);
+        this.s3client = new AmazonS3Client(getAWSCredentials());
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
@@ -71,5 +70,10 @@ public class AmazonClient {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName));
         return "Successfully deleted";
+    }
+
+    public AWSCredentials getAWSCredentials(){
+        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+        return credentials;
     }
 }
