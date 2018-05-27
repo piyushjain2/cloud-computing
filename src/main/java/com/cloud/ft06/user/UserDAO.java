@@ -20,35 +20,35 @@ public class UserDAO {
     //TODO change hardcoded values
     static BasicAWSCredentials credentials =  new BasicAWSCredentials("AKIAIKZBBPQLOQHT7GYQ", "l4lkusSDWVcB7n7k/vAOkgeLFgX7G6Ok+O0fPoi0");
 
-    //AWSCredentialsProvider cp = new AWSStaticCredentialsProvider(BasicAWSCredentials(ACCESS_KEY, SECRET_KEY));
-
-    // AmazonDynamoDBClient client = new AmazonDynamoDBClient(credentials).withRegion(Regions.US_WEST_2);
-    //  DynamoDB dynamoDB = new DynamoDB(client);
-
     static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)
     ).withRegion(Regions.US_WEST_2).build();
 
+    static DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(client);
+
+
+    /*
+        Adding user to dynamoDB
+     */
     public Map<String, Object> addUser(Map<String, Object> userDetails) {
         User user = new User();
         user.setId((Integer)userDetails.get("id"));
         user.setFirstName((String)userDetails.get("firstName"));
         user.setLastName((String)userDetails.get("lastName"));
-
-        // Save the item (book).
-        DynamoDBMapper mapper = new DynamoDBMapper(client);
-        mapper.save(user);
-       // User user =
+        dynamoDBMapper.save(user);
         return userDetails;
     }
 
-    public String getUser(Integer pId){
+
+    /*
+        Getting user from db using Query
+     */
+    public String getUserWithQuery(Integer pId){
         DynamoDB dynamoDB = new DynamoDB(client);
         Table userTable = dynamoDB.getTable("User");
         QuerySpec query = new QuerySpec()
                 .withKeyConditionExpression("id = :v_id")
                 .withValueMap(new ValueMap()
-                        .withInt(":v_id", pId));
-
+                                 .withInt(":v_id", pId));
         ItemCollection<QueryOutcome> items = userTable.query(query);
         Iterator<Item> iterator = items.iterator();
         Item item = null;
@@ -56,9 +56,28 @@ public class UserDAO {
             item = iterator.next();
             break;
         }
-
         return item.toJSONPretty();
-
-
     }
+
+
+    /*
+        Getting user using mapper
+     */
+    public User getUser(Integer pId){
+        User user = dynamoDBMapper.load(User.class,pId);
+        return user;
+    }
+
+    
+    /*
+        Updating user in DB
+     */
+    public Map<String, Object> updateUser(Map<String, Object> userDetails){
+        User user = dynamoDBMapper.load(User.class,userDetails.get("id"));
+        user.setFirstName((String)userDetails.get("firstName"));
+        user.setLastName((String)userDetails.get("lastName"));
+        dynamoDBMapper.save(user);
+        return userDetails;
+    }
+
 }

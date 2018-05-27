@@ -4,8 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-import java.util.Set;
-
 
     @DynamoDBTable(tableName = "User")
     public class User {
@@ -41,8 +39,6 @@ import java.util.Set;
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
-
-
 
         @Override
         public String toString() {
