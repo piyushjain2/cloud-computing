@@ -11,8 +11,8 @@ import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import org.springframework.stereotype.Repository;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+
 
 @Repository
 public class UserDAO {
@@ -34,7 +34,12 @@ public class UserDAO {
         user.setId((Integer)userDetails.get("id"));
         user.setFirstName((String)userDetails.get("firstName"));
         user.setLastName((String)userDetails.get("lastName"));
+        Follow follow = new Follow();
+        follow.setId((Integer)userDetails.get("id"));
+        follow.setFollowing(new ArrayList<Integer>());
+        follow.setFollowers(new ArrayList<Integer>());
         dynamoDBMapper.save(user);
+        dynamoDBMapper.save(follow);
         return userDetails;
     }
 
@@ -68,7 +73,7 @@ public class UserDAO {
         return user;
     }
 
-    
+
     /*
         Updating user in DB
      */
@@ -80,4 +85,40 @@ public class UserDAO {
         return userDetails;
     }
 
+
+    /*
+       Getting Follow using mapper
+    */
+    public Follow getFollow(Integer pId){
+        Follow follow = dynamoDBMapper.load(Follow.class,pId);
+        return follow;
+    }
+
+
+    /*
+        Adding follower to dynamoDB
+     */
+    public Map<String, Integer> addUserToFollowers(Map<String, Integer> followDetails) {
+        Follow follow = dynamoDBMapper.load(Follow.class,followDetails.get("id"));
+        follow.getFollowers().add(followDetails.get("followersId"));
+        dynamoDBMapper.save(follow);
+        return followDetails;
+    }
+
+
+    /*
+        Adding follower to dynamoDB
+     */
+    public Map<String, Integer> addUserToFollowing(Map<String, Integer> followDetails) {
+        Follow follow = dynamoDBMapper.load(Follow.class,followDetails.get("id"));
+        if(follow.getFollowing() != null) {
+            follow.getFollowing().add(followDetails.get("followingId"));
+        }else {
+            List<Integer> followingId = new ArrayList<Integer>();
+            followingId.add(followDetails.get("followingId"));
+            follow.setFollowing(followingId);
+        }
+        dynamoDBMapper.save(follow);
+        return followDetails;
+    }
 }

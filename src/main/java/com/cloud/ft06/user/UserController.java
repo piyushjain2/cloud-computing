@@ -1,8 +1,5 @@
 package com.cloud.ft06.user;
 
-
-import com.amazonaws.http.HttpResponse;
-import com.cloud.ft06.AmazonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,4 +30,24 @@ public class UserController {
     public Map<String, Object> updateUser(@RequestBody Map<String, Object> userDetails){
         return userDAO.updateUser(userDetails);
     }
+
+
+    @GetMapping("/getFollow")
+    public Follow getFollow(@RequestParam(value = "userId") Integer pId){
+        return userDAO.getFollow(pId);
+    }
+
+
+    @PostMapping("/addUserToFollowers")
+    public Map<String, Integer> addUserToFollowers(@RequestBody Map<String, Integer> followDetails){
+        return userDAO.addUserToFollowers(followDetails);
+    }
+
+
+    @PostMapping("/addUserToFollowing")
+    public Map<String, Integer> addUserToFollowing(@RequestBody Map<String, Integer> followDetails){
+        return userDAO.addUserToFollowing(followDetails);
+    }
+
+
 }
