@@ -10,16 +10,19 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
         private Integer id;
         private String firstName;
         private String lastName;
+        private String email;
+        private String password;
+        private String username;
 
 
         // Partition key
-        @DynamoDBHashKey(attributeName = "id")
-        public Integer getId() {
-            return id;
+        @DynamoDBHashKey(attributeName = "username")
+        public String getUsername() {
+            return username;
         }
 
-        public void setId(Integer id) {
-            this.id = id;
+        public void setUsername(String username) {
+            this.username = username;
         }
 
         @DynamoDBAttribute(attributeName = "firstName")
@@ -38,6 +41,24 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
         public void setLastName(String lastName) {
             this.lastName = lastName;
+        }
+
+        @DynamoDBAttribute(attributeName = "email")
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        @DynamoDBAttribute(attributeName = "password")
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
         }
 
         @Override

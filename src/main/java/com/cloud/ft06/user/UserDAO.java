@@ -6,9 +6,12 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -30,15 +33,21 @@ public class UserDAO {
         Adding user to dynamoDB
      */
     public Map<String, Object> addUser(Map<String, Object> userDetails) {
+        //String message;
         User user = new User();
-        user.setId((Integer)userDetails.get("id"));
+        user.setUsername((String)userDetails.get("username"));
         user.setFirstName((String)userDetails.get("firstName"));
         user.setLastName((String)userDetails.get("lastName"));
+        user.setEmail((String)userDetails.get("email"));
+        user.setPassword((String)userDetails.get("password"));
+        DynamoDBSaveExpression saveExpr = new DynamoDBSaveExpression();
+        saveExpr.setExpected(new ImmutableMap.Builder()
+                .put("username", new ExpectedAttributeValue(false)).build());
         Follow follow = new Follow();
-        follow.setId((Integer)userDetails.get("id"));
+        follow.setId(user.getUsername().hashCode());
         follow.setFollowing(new ArrayList<Integer>());
         follow.setFollowers(new ArrayList<Integer>());
-        dynamoDBMapper.save(user);
+        dynamoDBMapper.save(user,saveExpr);
         dynamoDBMapper.save(follow);
         return userDetails;
     }
